@@ -1,4 +1,4 @@
-exp 1:
+# exp 1:
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -72,7 +72,7 @@ def main():
 if __name__ == "__main__":
     main()
 
-exp 2:
+# exp 2:
 
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -80,7 +80,7 @@ from sklearn.linear_model import LinearRegression, Lasso, Ridge, ElasticNet
 from sklearn.metrics import mean_squared_error
 import matplotlib.pyplot as plt
 
-df = pd.read_csv("housingdata.csv")
+df = pd.read_csv("AML/Housingdata.csv")
 df_filled = df.fillna(df.mean(numeric_only=True))
 X = df_filled.drop(columns=['MEDV'])
 y = df_filled['MEDV']
@@ -89,25 +89,25 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 lr_model = LinearRegression()
 lr_model.fit(X_train, y_train)
 lr_pred = lr_model.predict(X_test)
-lr_rmse = mean_squared_error(y_test, lr_pred, squared=False)
+lr_rmse = mean_squared_error(y_test, lr_pred)**0.5
 print("Simple Linear Regression RMSE:", lr_rmse)
 
 lasso_model = Lasso(alpha=0.1)
 lasso_model.fit(X_train, y_train)
 lasso_pred = lasso_model.predict(X_test)
-lasso_rmse = mean_squared_error(y_test, lasso_pred, squared=False)
+lasso_rmse = mean_squared_error(y_test, lasso_pred)**0.5
 print("Lasso Regression RMSE:", lasso_rmse)
 
 ridge_model = Ridge(alpha=0.1)
 ridge_model.fit(X_train, y_train)
 ridge_pred = ridge_model.predict(X_test)
-ridge_rmse = mean_squared_error(y_test, ridge_pred, squared=False)
+ridge_rmse = mean_squared_error(y_test, ridge_pred)**0.5
 print("Ridge Regression RMSE:", ridge_rmse)
 
 elasticnet_model = ElasticNet(alpha=0.1, l1_ratio=0.5)
 elasticnet_model.fit(X_train, y_train)
 elasticnet_pred = elasticnet_model.predict(X_test)
-elasticnet_rmse = mean_squared_error(y_test, elasticnet_pred, squared=False)
+elasticnet_rmse = mean_squared_error(y_test, elasticnet_pred)**0.5
 print("Elastic Net Regression RMSE:", elasticnet_rmse)
 
 plt.figure(figsize=(8, 6))
@@ -147,7 +147,7 @@ plt.legend()
 plt.show()
 
 
-exp 3:
+# exp 3:
 
 import pandas as pd
 import numpy as np
@@ -179,7 +179,7 @@ plt.ylabel("Actual")
 plt.show()
 
 
-exp 4 :
+# exp 4 :
 
 import pandas as pd
 import numpy as np
@@ -226,7 +226,7 @@ plt.ylabel('Demand')
 plt.legend()
 plt.show()
 
-exp 5 :
+# exp 5 :
 
 import pandas as pd
 import numpy as np
@@ -294,7 +294,7 @@ plt.title('Residuals')
 plt.xlabel
 
 
-exp 6 :
+# exp 6 :
 
 import pandas as pd
 import numpy as np
@@ -344,7 +344,7 @@ resultFrame = resultFrame.rename(columns={'Left Hand Side': 'Product Purchased',
 print(resultFrame)
 
 
-exp 7 :
+# exp 7 :
 
 import pandas as pd
 import numpy as np
@@ -406,7 +406,7 @@ movies_df[movies_df.movieId == 231]
 print(get_similar_movies(231))
 
 
-exp 8:
+# exp 8:
 
 import pandas as pd
 import random
@@ -444,7 +444,7 @@ review2 = "the movie was a torture"
 print(f'Review2: {review2}\nSentiment: {classify_review(review2)}')
 
 
-exp 9 :
+# exp 9 :
 
 import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
@@ -491,7 +491,7 @@ accuracy = accuracy_score(y_test, y_pred)
 print("Accuracy:", accuracy)
 
 
-exp 10 :
+# exp 10 :
 
 import pandas as pd
 import matplotlib.pyplot as plt
