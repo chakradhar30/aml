@@ -235,7 +235,7 @@ from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from statsmodels.tsa.stattools import adfuller
 
-data = pd.read_csv("AML/airline_passengers.csv")
+data = pd.read_csv("airline_passengers.csv")
 data['Month'] = pd.to_datetime(data['Month'])
 data.set_index('Month', inplace=True)
 
@@ -249,15 +249,15 @@ plt.xlabel('Year')
 plt.ylabel('Passenger Count')
 plt.show()
 
-def check_stationarity(data):
-    result = adfuller(data)
+def check_stationarity(series):
+    result = adfuller(series)
     print('ADF Statistic:', result[0])
     print('p-value:', result[1])
     print('Critical Values:')
     for key, value in result[4].items():
-        print('\t{}: {}'.format(key, value))
+        print(f'\t{key}: {value}')
 
-check_stationarity(data)
+check_stationarity(data.iloc[:, 0])
 
 diff_data = data.diff().dropna()
 
@@ -268,7 +268,7 @@ plt.xlabel('Year')
 plt.ylabel('Differenced Passenger Count')
 plt.show()
 
-check_stationarity(diff_data)
+check_stationarity(diff_data.iloc[:, 0])
 
 plot_acf(diff_data, lags=20)
 plt.title('Autocorrelation Function (ACF)')
@@ -281,7 +281,6 @@ plt.show()
 p = 2
 d = 1
 q = 2
-
 model = ARIMA(data, order=(p, d, q))
 model_fit = model.fit()
 
@@ -291,9 +290,15 @@ residuals = pd.DataFrame(model_fit.resid)
 plt.figure(figsize=(10, 6))
 plt.plot(residuals)
 plt.title('Residuals')
-plt.xlabel
+plt.xlabel('Year')
+plt.ylabel('Residuals')
+plt.show()
 
-
+model_fit.plot_predict(start=1, end=len(data)+12, dynamic=False)
+plt.title('Actual vs. Predicted')
+plt.xlabel('Year')
+plt.ylabel('Passenger Count')
+plt.show()
 # exp 6 :
 
 import pandas as pd
