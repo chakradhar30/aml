@@ -1,550 +1,808 @@
-# exp 1:
-
-import numpy as np
-import matplotlib.pyplot as plt
-
-def mean_squared_error(y_true, y_predicted):
-    cost = np.mean((y_true - y_predicted) ** 2)
-    return cost
-
-def gradient_descent(x, y, iterations=1000, learning_rate=0.0001, stopping_threshold=1e-6):
-    current_coef = 0.1
-    current_intercept = 0.01
-    n = float(len(x))
-    costs = []
-    coef = []
-    previous_cost = None
-
-    for i in range(iterations):
-        y_predicted = (current_coef * x) + current_intercept
-        current_cost = mean_squared_error(y, y_predicted)
-
-        if previous_cost and abs(previous_cost - current_cost) <= stopping_threshold:
-            break
-
-        previous_cost = current_cost
-        costs.append(current_cost)
-        coef.append(current_coef)
-
-        coef_derivative = -(1 / n) * np.sum(x * (y - y_predicted))
-        intercept_derivative = -(1 / n) * np.sum(y - y_predicted)
-
-        current_coef -= learning_rate * coef_derivative
-        current_intercept -= learning_rate * intercept_derivative
-
-        print(f"Iteration {i + 1}: Cost {current_cost}, coef: {current_coef}, intercept: {current_intercept}")
-
-    plt.figure(figsize=(8, 6))
-    plt.plot(coef, costs)
-    plt.scatter(coef, costs, marker='o', color='red')
-    plt.title("Cost vs coef")
-    plt.ylabel("Cost")
-    plt.xlabel("coef")
-    plt.show()
-
-    return current_coef, current_intercept
-
-def main():
-    X = np.array([32.50234527, 53.42680403, 61.53035803, 47.47563963, 59.81320787,
-                  55.14218841, 52.21179669, 39.29956669, 48.10504169, 52.55001444,
-                  45.41973014, 54.35163488, 44.1640495, 58.16847072, 56.72720806,
-                  48.95588857, 44.68719623, 60.29732685, 45.61864377, 38.81681754])
-
-    Y = np.array([31.70700585, 68.77759598, 62.5623823, 71.54663223, 87.23092513,
-                  78.21151827, 79.64197305, 59.17148932, 75.3312423, 71.30087989,
-                  55.16567715, 82.47884676, 62.00892325, 75.39287043, 81.43619216,
-                  60.72360244, 82.89250373, 97.37989686, 48.84715332, 56.87721319])
-
-    estimated_coef, estimated_intercept = gradient_descent(X, Y, iterations=2000)
-
-    print(f"Estimated coef: {estimated_coef}\nEstimated intercept: {estimated_intercept}")
-
-    Y_pred = estimated_coef * X + estimated_intercept
-
-    plt.figure(figsize=(8, 6))
-    plt.scatter(X, Y, marker='o', color='red')
-    plt.plot([min(X), max(X)], [min(Y_pred), max(Y_pred)], color='blue', linestyle='dashed')
-    plt.xlabel("X")
-    plt.ylabel("Y")
-    plt.title("Linear Regression: Actual vs Predicted")
-    plt.show()
-
-if __name__ == "__main__":
-    main()
-
-# exp 2:
-
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression, Lasso, Ridge, ElasticNet
-from sklearn.metrics import mean_squared_error
-import matplotlib.pyplot as plt
-
-df = pd.read_csv("AML/Housingdata.csv")
-df_filled = df.fillna(df.mean(numeric_only=True))
-X = df_filled.drop(columns=['MEDV'])
-y = df_filled['MEDV']
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-lr_model = LinearRegression()
-lr_model.fit(X_train, y_train)
-lr_pred = lr_model.predict(X_test)
-lr_rmse = mean_squared_error(y_test, lr_pred)**0.5
-print("Simple Linear Regression RMSE:", lr_rmse)
-
-lasso_model = Lasso(alpha=0.1)
-lasso_model.fit(X_train, y_train)
-lasso_pred = lasso_model.predict(X_test)
-lasso_rmse = mean_squared_error(y_test, lasso_pred)**0.5
-print("Lasso Regression RMSE:", lasso_rmse)
-
-ridge_model = Ridge(alpha=0.1)
-ridge_model.fit(X_train, y_train)
-ridge_pred = ridge_model.predict(X_test)
-ridge_rmse = mean_squared_error(y_test, ridge_pred)**0.5
-print("Ridge Regression RMSE:", ridge_rmse)
-
-elasticnet_model = ElasticNet(alpha=0.1, l1_ratio=0.5)
-elasticnet_model.fit(X_train, y_train)
-elasticnet_pred = elasticnet_model.predict(X_test)
-elasticnet_rmse = mean_squared_error(y_test, elasticnet_pred)**0.5
-print("Elastic Net Regression RMSE:", elasticnet_rmse)
-
-plt.figure(figsize=(8, 6))
-plt.scatter(y_test, lr_pred, color='blue', label='Predicted')
-plt.plot([min(y_test), max(y_test)], [min(y_test), max(y_test)], color='red', linestyle='--', label='Actual')
-plt.title('Simple Linear Regression')
-plt.xlabel('Actual MEDV')
-plt.ylabel('Predicted MEDV')
-plt.legend()
-plt.show()
-
-plt.figure(figsize=(8, 6))
-plt.scatter(y_test, lasso_pred, color='blue', label='Predicted')
-plt.plot([min(y_test), max(y_test)], [min(y_test), max(y_test)], color='red', linestyle='--', label='Actual')
-plt.title('Lasso Regression')
-plt.xlabel('Actual MEDV')
-plt.ylabel('Predicted MEDV')
-plt.legend()
-plt.show()
-
-plt.figure(figsize=(8, 6))
-plt.scatter(y_test, ridge_pred, color='blue', label='Predicted')
-plt.plot([min(y_test), max(y_test)], [min(y_test), max(y_test)], color='red', linestyle='--', label='Actual')
-plt.title('Ridge Regression')
-plt.xlabel('Actual MEDV')
-plt.ylabel('Predicted MEDV')
-plt.legend()
-plt.show()
-
-plt.figure(figsize=(8, 6))
-plt.scatter(y_test, elasticnet_pred, color='blue', label='Predicted')
-plt.plot([min(y_test), max(y_test)], [min(y_test), max(y_test)], color='red', linestyle='--', label='Actual')
-plt.title('Elastic Net Regression')
-plt.xlabel('Actual MEDV')
-plt.ylabel('Predicted MEDV')
-plt.legend()
-plt.show()
-
-
-# exp 3:
-
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import confusion_matrix, classification_report
-
-data = pd.read_csv("AML/Social_Network_Ads.csv")
-x = data.iloc[:, [2, 3]].values
-y = data.iloc[:, 4].values
-
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=2)
-
-classifier = RandomForestClassifier(n_estimators=10, criterion='gini')
-classifier.fit(x_train, y_train)
-
-y_pred = classifier.predict(x_test)
-
-cm = confusion_matrix(y_test, y_pred)
-print(cm)
-print(classification_report(y_test, y_pred))
-
-sns.heatmap(cm, annot=True)
-plt.title("Confusion Matrix Heatmap")
-plt.xlabel("Predicted")
-plt.ylabel("Actual")
-plt.show()
-
-
-# exp 4 :
-
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-import statsmodels.api as sm
-from statsmodels.graphics.tsaplots import plot_pacf, plot_acf
-
-data = pd.read_csv('AML/vimana.csv') 
-print(data.head())
-
-ts = data['demand']
-
-ts.plot(figsize=(10, 6))
-plt.title('Time Series Data')
-plt.xlabel('Time')
-plt.ylabel('Demand')
-plt.show()
-
-train_size = int(len(ts) * 0.8)
-train_data, test_data = ts[:train_size], ts[train_size:]
-
-p = len(train_data) // 2
-
-fig, axes = plt.subplots(1, 2, figsize=(12, 4))
-plot_pacf(train_data, lags=p, ax=axes[0])
-plot_acf(train_data, lags=p, ax=axes[1])
-axes[0].set_title('Partial Autocorrelation Function (PACF)')
-axes[1].set_title('Autocorrelation Function (ACF)')
-plt.show()
-
-p = 2
-
-ar_model = sm.tsa.AutoReg(train_data, lags=p)
-arima_result = ar_model.fit() 
-
-forecast = arima_result.predict(start=len(train_data), end=len(train_data) + len(test_data) - 1)
-
-plt.figure(figsize=(10, 6))
-plt.plot(test_data.index, test_data.values, label='Actual')
-plt.plot(test_data.index, forecast, label='Predicted')
-plt.title('AR Model Forecast')
-plt.xlabel('Time')
-plt.ylabel('Demand')
-plt.legend()
-plt.show()
-
-# exp 5 :
-
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-from statsmodels.tsa.arima.model import ARIMA
-from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
-from statsmodels.tsa.stattools import adfuller
-
-data = pd.read_csv("airline_passengers.csv")
-data['Month'] = pd.to_datetime(data['Month'])
-data.set_index('Month', inplace=True)
-
-if data.isnull().sum().sum() > 0:
-    print("Warning: There are missing values in the dataset.")
-
-plt.figure(figsize=(10, 6))
-plt.plot(data)
-plt.title('Airline Passenger Data')
-plt.xlabel('Year')
-plt.ylabel('Passenger Count')
-plt.show()
-
-def check_stationarity(series):
-    result = adfuller(series)
-    print('ADF Statistic:', result[0])
-    print('p-value:', result[1])
-    print('Critical Values:')
-    for key, value in result[4].items():
-        print(f'\t{key}: {value}')
-
-check_stationarity(data.iloc[:, 0])
-
-diff_data = data.diff().dropna()
-
-plt.figure(figsize=(10, 6))
-plt.plot(diff_data)
-plt.title('Differenced Airline Passenger Data')
-plt.xlabel('Year')
-plt.ylabel('Differenced Passenger Count')
-plt.show()
-
-check_stationarity(diff_data.iloc[:, 0])
-
-plot_acf(diff_data, lags=20)
-plt.title('Autocorrelation Function (ACF)')
-plt.show()
-
-plot_pacf(diff_data, lags=20)
-plt.title('Partial Autocorrelation Function (PACF)')
-plt.show()
-
-p = 2
-d = 1
-q = 2
-model = ARIMA(data, order=(p, d, q))
-model_fit = model.fit()
-
-print(model_fit.summary())
-
-residuals = pd.DataFrame(model_fit.resid)
-plt.figure(figsize=(10, 6))
-plt.plot(residuals)
-plt.title('Residuals')
-plt.xlabel('Year')
-plt.ylabel('Residuals')
-plt.show()
-
-model_fit.plot_predict(start=1, end=len(data)+12, dynamic=False)
-plt.title('Actual vs. Predicted')
-plt.xlabel('Year')
-plt.ylabel('Passenger Count')
-plt.show()
-# exp 6 :
-
-import pandas as pd
-import numpy as np
-import warnings
-import seaborn as sns
-import matplotlib.pyplot as plt
-from apyori import apriori
-
-dataset = pd.read_csv("AML/Groceries_dataset.csv")
-print('Dimensions of dataset are:', dataset.shape)
-dataset = dataset.drop(columns='Member_number')
-dataset = dataset[dataset['itemDescription'] != 'bags']
-dataset['Date'] = pd.to_datetime(dataset['Date'], format='%d-%m-%Y')
-dataset = dataset.groupby('Date')['itemDescription'].apply(list).reset_index()
-
-transactions = []
-for indexer in range(len(dataset)):
-    transactions.append(dataset['itemDescription'].iloc[indexer])
-
-rules = apriori(transactions=transactions,
-                min_support=0.00412087912,
-                min_confidence=0.6,
-                min_lift=1.9,
-                min_length=2,
-                max_length=2)
-
-results = list(rules)
-
-def inspect(results):
-    lhs = [tuple(result[2][0][0])[0] for result in results]
-    rhs = [tuple(result[2][0][1])[0] for result in results]
-    supports = [result[1] for result in results]
-    confidences = [result[2][0][2] for result in results]
-    lifts = [result[2][0][3] for result in results]
-    return list(zip(lhs, rhs, supports, confidences, lifts))
-
-resultsinDataFrame = pd.DataFrame(inspect(results),
-                                  columns=['Left Hand Side', 'Right Hand Side', 'Support', 'Confidence', 'Lift'])
-
-resultsinDataFrame.sort_values('Confidence', ascending=False)
-
-resultFrame = resultsinDataFrame.iloc[:, 0:-3]
-print(resultFrame)
-
-resultFrame = resultFrame.groupby('Left Hand Side')['Right Hand Side'].apply(list).reset_index()
-resultFrame = resultFrame.rename(columns={'Left Hand Side': 'Product Purchased', 'Right Hand Side': 'Also Purchased Along'})
-print(resultFrame)
-
-
-# exp 7 :
-
-import pandas as pd
-import numpy as np
-from sklearn.metrics import pairwise_distances
-from scipy.spatial.distance import cosine, correlation
-
-rating_df = pd.read_csv("AML/ratings.csv")
-rating_df.head(5)
-rating_df.drop('timestamp', axis=1, inplace=True)
-print(len(rating_df.userId.unique()))
-print(len(rating_df.movieId.unique()))
-
-user_movies_df = rating_df.pivot(index='userId', columns='movieId', values='rating').reset_index(drop=True)
-print(user_movies_df.head())
-
-user_movies_df.index = rating_df.userId.unique()
-user_movies_df.iloc[0:5, 0:15]
-
-user_movies_df.fillna(0, inplace=True)
-user_movies_df.iloc[0:5, 0:10]
-
-user_sim = 1 - pairwise_distances(user_movies_df.values, metric='cosine')
-user_sim_df = pd.DataFrame(user_sim)
-print(user_sim_df)
-
-user_sim_df.index = rating_df.userId.unique()
-user_sim_df.columns = rating_df.userId.unique()
-user_sim_df.iloc[0:5, 0:5]
-
-rating_mat = rating_df.pivot(index='movieId', columns='userId', values='rating').reset_index(drop=True)
-rating_mat.fillna(0, inplace=True)
-
-movie_sim = 1 - pairwise_distances(rating_mat.values, metric='cosine')
-
-movie_sim_df = pd.DataFrame(movie_sim)
-movie_sim_df.iloc[0:5, 0:5]
-print(movie_sim_df)
-
-movies_df = pd.read_csv("AML/movies.csv")
-movies_df[0:5]
-movies_df.drop('genres', axis=1, inplace=True)
-
-def get_user_similar_movies(user1, user2):
-    common_movies = rating_df[rating_df.userId == user1].merge(rating_df[rating_df.userId == user2], on='movieId', how='inner')
-    return common_movies.merge(movies_df, on='movieId')
-
-common_movies = get_user_similar_movies(2, 332)
-print(common_movies)
-
-movie_sim_df.shape
-
-def get_similar_movies(movieid, topN=5):
-    movieidx = movies_df[movies_df.movieId == movieid].index[0]
-    movies_df['similarity'] = movie_sim_df.iloc[movieidx]
-    top_n = movies_df.sort_values(['similarity'], ascending=False)[0:topN]
-    return top_n
-
-movies_df[movies_df.movieId == 231]
-print(get_similar_movies(231))
-
-
-# exp 8:
-
-import pandas as pd
-import random
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score, classification_report
-
-df = pd.read_csv("AML/IMDB Dataset.csv")
-df['sentiment'] = df['sentiment'].map({'positive': 1, 'negative': 0})
-print(df)
-x = df['review']
-y = df['sentiment']
-X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=42)
-
-vectorizer = CountVectorizer(stop_words='english')
-X_train_counts = vectorizer.fit_transform(X_train)
-clf = MultinomialNB()
-clf.fit(X_train_counts, y_train)
-
-X_test_counts = vectorizer.transform(X_test)
-y_pred = clf.predict(X_test_counts)
-
-print(f'Accuracy: {accuracy_score(y_test, y_pred)}')
-print(classification_report(y_test, y_pred))
-
-def classify_review(review):
-    review_counts = vectorizer.transform([review])
-    return 'positive' if clf.predict(review_counts)[0] == 1 else 'negative'
-
-review = "the movie was phenomenal"
-print(f'Review: {review}\nSentiment: {classify_review(review)}')
-
-review2 = "the movie was a torture"
-print(f'Review2: {review2}\nSentiment: {classify_review(review2)}')
-
-
-# exp 9 :
-
-import pandas as pd
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.model_selection import train_test_split
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.metrics import accuracy_score
-import nltk
-from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
-import string
-
-nltk.download('stopwords')
-nltk.download('punkt')
-nltk.download('punkt_tab') 
-
-data = pd.read_csv("AML/sentiment_train.txt", delimiter='\t')
-print(data)
-
-X = data['text']
-y = data['sentiment']
-
-def preprocess_text(text):
-    tokens = word_tokenize(text.lower())
-    tokens = [token for token in tokens if token not in string.punctuation]
-    stop_words = set(stopwords.words('english'))
-    tokens = [token for token in tokens if token not in stop_words]
-    cleaned_text = ' '.join(tokens)
-    return cleaned_text
-
-X_cleaned = X.apply(preprocess_text)
-print(X_cleaned)
-
-X_train, X_test, y_train, y_test = train_test_split(X_cleaned, y, test_size=0.2, random_state=42)
-
-vectorizer = CountVectorizer(ngram_range=(1, 2))
-X_train_vectorized = vectorizer.fit_transform(X_train)
-X_test_vectorized = vectorizer.transform(X_test)
-
-classifier = MultinomialNB()
-classifier.fit(X_train_vectorized, y_train)
-y_pred = classifier.predict(X_test_vectorized)
-
-accuracy = accuracy_score(y_test, y_pred)
-print("Accuracy:", accuracy)
-
-
-# exp 10 :
-
-import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix, ConfusionMatrixDisplay
-
-data = pd.read_csv("AML\diabetes.csv")
-print(data.head())
-
-X = data.drop('Outcome', axis=1) 
-y = data['Outcome']
-
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-classifier = RandomForestClassifier(n_estimators=100, random_state=42)
-classifier.fit(X_train, y_train)
-
-y_pred = classifier.predict(X_test)
-
-accuracy = accuracy_score(y_test, y_pred)
-print(f"Accuracy: {accuracy}")
-
-print("Classification Report:")
-print(classification_report(y_test, y_pred))
-
-print("Confusion Matrix:")
-cm = confusion_matrix(y_test, y_pred)
-print(cm)
-
-matrix = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=classifier.classes_)
-matrix.plot()
-plt.show()
-
-def classify_patient(data):
-    data_df = pd.DataFrame([data], columns=X.columns)
-    prediction = classifier.predict(data_df)
-    return 'Diabetic' if prediction[0] == 1 else 'Non-Diabetic'
-
-new_patient = {
-    'Pregnancies': 2,
-    'Glucose': 90,
-    'BloodPressure': 70,
-    'SkinThickness': 20,
-    'Insulin': 180,
-    'BMI': 25.5,
-    'DiabetesPedigreeFunction': 0.5,
-    'Age': 33
+exp 1: 
+
+import java.util.*;
+
+public class StringEnding {
+    public static void main(String args[]) {
+
+        Scanner sc = new Scanner(System.in);
+        System.out.println("1. Enter the string");
+        System.out.println("2. Exit");
+        System.out.println("Enter a choice");
+        int n = sc.nextInt();
+        
+        while (n != 2) {
+            System.out.println("Enter the string :");
+            String s = sc.next();
+
+            if (s.endsWith("abc")) {
+                System.out.println(s + " is Accepted");
+            } else {
+                System.out.println(s + " is Not Accepted");
+            }
+
+            System.out.println("1. Enter the string\n2. Exit");
+            System.out.println("Enter a choice");
+            n = sc.nextInt();
+        }
+        sc.close();
+    }
 }
 
-print(f"New patient classification: {classify_patient(new_patient)}")
+exp 2 :
+
+import java.util.*;
+
+public class LexicalAnalyzer {
+    public static void main(String[] args) {
+        ArrayList<String> keywords = new ArrayList<>(Arrays.asList(
+            "if", "else", "while", "for", "int", "float", "double", "char", "String", "boolean"));
+
+        ArrayList<String> operators = new ArrayList<>(Arrays.asList(
+            "+", "-", "*", "/", "=", ">", "<", "!", "&", "|", "++", "--"));
+
+        ArrayList<String> delimiters = new ArrayList<>(Arrays.asList(
+            "(", ")", "{", "}", "[", "]", ",", ";"));
+
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter program with single spaces");
+        String input = sc.nextLine();
+        String[] arr = input.split(" ");
+        int len = arr.length;
+        String[] ans = new String[len];
+
+        for (int i = 0; i < len; i++) {
+            if (keywords.contains(arr[i])) {
+                ans[i] = "keyword";
+            } else if (operators.contains(arr[i])) {
+                ans[i] = "operator";
+            } else if (delimiters.contains(arr[i])) {
+                ans[i] = "delimiter";
+            } else if (isIdentifier(arr[i])) {
+                ans[i] = "identifier";
+            } else if (isLiteral(arr[i])) {
+                ans[i] = "literal";
+            } else {
+                ans[i] = "unknown";
+            }
+        }
+
+        for (int i = 0; i < len; i++) {
+            System.out.println(arr[i] + ": " + ans[i]);
+        }
+
+        sc.close();
+    }
+
+    private static boolean isIdentifier(String str) {
+        if (Character.isDigit(str.charAt(0))) {
+            return false;
+        }
+        for (char c : str.toCharArray()) {
+            if (!Character.isLetterOrDigit(c) && c != '_') {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean isLiteral(String str) {
+        try {
+            Integer.parseInt(str);
+            return true;
+        } catch (NumberFormatException e1) {
+            try {
+                Double.parseDouble(str);
+                return true;
+            } catch (NumberFormatException e2) {
+                return false;
+            }
+        }
+    }
+}
+
+
+exp 3 :
+
+import java.util.Scanner;
+
+public class LeftRecursionElimination {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter Number of Productions: ");
+        int num = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+
+        System.out.println("Enter the grammar as A -> Aa / b:");
+        for (int i = 0; i < num; i++) {
+            String production = scanner.nextLine().trim();
+            eliminateLeftRecursion(production);
+        }
+
+        scanner.close();
+    }
+
+    public static void eliminateLeftRecursion(String production) {
+        String[] parts = production.split("->");
+        char nonTerminal = parts[0].charAt(0);
+        String[] choices = parts[1].split("/");
+
+        System.out.println("GRAMMAR: " + production);
+
+        // Checking for left recursion
+        if (choices[0].startsWith("" + nonTerminal)) {
+            String beta = choices[0].substring(1); // Extracting beta from the first choice
+            System.out.println(nonTerminal + " is left recursive.");
+
+            // Printing reduced grammar
+            System.out.println(nonTerminal + " -> " + choices[1].trim() + nonTerminal + "'");
+            System.out.println(nonTerminal + "' -> " + beta + nonTerminal + "' / epsilon");
+        } else {
+            System.out.println(nonTerminal + " is not left recursive.");
+        }
+    }
+}
+
+
+
+exp 4:
+
+ import java.util.*;
+
+public class LeftFactoring {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter the number of productions:");
+        int n = sc.nextInt();
+        sc.nextLine();
+        
+        String[] productions = new String[n];
+        System.out.println("Enter the productions:");
+        for (int i = 0; i < n; i++) {
+            productions[i] = sc.nextLine();
+        }
+        
+        eliminateLeftFactoring(productions);
+        sc.close();
+    }
+
+    private static void eliminateLeftFactoring(String[] productions) {
+        boolean leftFactored = false;
+        
+        for (String production : productions) {
+            String[] parts = production.split("->");
+            String lhs = parts[0].trim();
+            String[] rhs = parts[1].split("\\|");
+            String prefix = findCommonPrefix(rhs);
+
+            if (!prefix.isEmpty()) {
+                leftFactored = true;
+                System.out.println(lhs + "->" + prefix + lhs + "'");
+
+                List<String> newRhs = new ArrayList<>();
+                for (String r : rhs) {
+                    if (r.startsWith(prefix)) {
+                        String suffix = r.substring(prefix.length()).trim();
+                        if (suffix.isEmpty()) {
+                            suffix = "";
+                        }
+                        newRhs.add(suffix);
+                    } else {
+                        newRhs.add(r);
+                    }
+                }
+                System.out.println(lhs + "'->" + String.join("|", newRhs));
+            }
+        }
+        
+        if (!leftFactored) {
+            System.out.println("Given productions do not have left factoring");
+        }
+    }
+
+    private static String findCommonPrefix(String[] rhs) {
+        String prefix = rhs[0];
+        
+        for (int i = 1; i < rhs.length; i++) {
+            while (rhs[i].indexOf(prefix) != 0) {
+                prefix = prefix.substring(0, prefix.length() - 1);
+                if (prefix.isEmpty()) {
+                    return "";
+                }
+            }
+        }
+        return prefix;
+    }
+}
+ 
+    
+
+exp 5 :
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Scanner;
+import java.util.Set;
+
+public class first {
+    static String first[], follow[], grammar[][];
+    static List<String> nonTerminals = new ArrayList<>();
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter the no of productions");
+        int n = sc.nextInt();
+        grammar = new String[n][2];
+        System.out.println("Enter the productions that are free from Left Recursion");
+        sc.nextLine();
+        
+        for (int i = 0; i < n; i++) {
+            String s = sc.nextLine();
+            String p[] = s.split("->");
+            nonTerminals.add(p[0].trim());
+            grammar[i][0] = p[0].trim();
+            grammar[i][1] = p[1];
+        }
+
+        first = new String[n];
+        follow = new String[n];
+        
+        for (int i = 0; i < n; i++)
+            first[i] = calculateFirst(i);
+        
+        System.out.println("First :-");
+        for (int i = 0; i < n; i++)
+            System.out.println(nonTerminals.get(i) + " : " + print(first[i]));
+
+        for (int i = 0; i < n; i++)
+            follow[i] = calculateFollow(i);
+        
+        System.out.println("Follow :-");
+        for (int i = 0; i < n; i++)
+            System.out.println(nonTerminals.get(i) + " : " + print(follow[i]));
+    }
+
+    static String print(String s) {
+        StringBuilder sb = new StringBuilder();
+        sb.append('{');
+        sb.append(s.charAt(0));
+        for (char c : s.toCharArray())
+            if (sb.indexOf(c + "") == -1)
+                sb.append("," + c);
+        sb.append('}');
+        return sb.toString();
+    }
+
+    static String calculateFirst(int i) {
+        String s[] = grammar[i][1].split("\\|"), temp = "";
+        for (String p : s) {
+            if (!nonTerminals.contains(p.charAt(0) + ""))
+                temp += p.charAt(0);
+            else
+                temp += calculateFirst(nonTerminals.indexOf(p.charAt(0) + ""));
+        }
+        return temp;
+    }
+
+    static String calculateFollow(int i) {
+        Set<Character> temp = new HashSet<>();
+        if (i == 0)
+            temp.add('$');
+
+        for (int idx = 0; idx < grammar.length; idx++) {
+            if (grammar[idx][0] == nonTerminals.get(i))
+                continue;
+
+            String s[] = grammar[idx][1].split("\\|");
+            for (String p : s) {
+                String nt = nonTerminals.get(i);
+                if (p.contains(nt)) {
+                    if (p.indexOf(nt) == p.length() - 1) {
+                        String t = follow[nonTerminals.indexOf(grammar[idx][0])];
+                        for (char c : t.toCharArray())
+                            temp.add(c);
+                    } else {
+                        int x = p.indexOf(nt);
+                        if (!nonTerminals.contains(p.charAt(x + 1) + ""))
+                            temp.add(p.charAt(x + 1));
+                        else {
+                            if (first[nonTerminals.indexOf(p.charAt(x + 1) + "")].contains("e")) {
+                                String t = first[nonTerminals.indexOf(p.charAt(x + 1) + "")];
+                                for (char c : t.toCharArray())
+                                    temp.add(c);
+                                temp.remove('e');
+                                t = follow[nonTerminals.indexOf(grammar[idx][0])];
+                                for (char c : t.toCharArray())
+                                    temp.add(c);
+                            } else {
+                                String t = first[nonTerminals.indexOf(p.charAt(x + 1) + "")];
+                                for (char c : t.toCharArray())
+                                    temp.add(c);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        String ans = "";
+        for (char x : temp)
+            ans += x;
+        return ans;
+    }
+}
+
+
+exp 6 :
+
+
+import java.util.*;
+
+public class Parse {
+    static String s = "", st = "";
+    
+    @SuppressWarnings("resource")
+    public static void main(String[] args) {
+        String[][] tab = {
+            {"ta", "@", "@", "ta", "@", "@"},
+            {"@", "+ta", "@", "@", "!", "!"},
+            {"fb", "@", "@", "fb", "@", "@"},
+            {"@", "!", "*fb", "@", "!", "!"},
+            {"i", "@", "@", "(e)", "@", "@"}
+        };
+        
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter the string:\n");
+        s = scanner.nextLine();
+        s += "$";
+        st = "$e";
+        
+        int st_i = 1, s_i = 0;
+        StringBuilder temp = new StringBuilder();
+        
+        System.out.println("\nStack\t\tInput");
+        
+        while (!st.endsWith("$") || !s.endsWith("$")) {
+            int s1, s2;
+            
+            switch (st.charAt(st_i)) {
+                case 'e': s1 = 0; break;
+                case 'a': s1 = 1; break;
+                case 't': s1 = 2; break;
+                case 'b': s1 = 3; break;
+                case 'f': s1 = 4; break;
+                default: s1 = -1;
+            }
+            
+            switch (s.charAt(s_i)) {
+                case 'i': s2 = 0; break;
+                case '+': s2 = 1; break;
+                case '*': s2 = 2; break;
+                case '(': s2 = 3; break;
+                case ')': s2 = 4; break;
+                case '$': s2 = 5; break;
+                default: s2 = -1;
+            }
+            
+            if (s1 == -1 || s2 == -1 || tab[s1][s2].equals("@")) {
+                System.out.println("Failure");
+                return;
+            }
+            
+            if (tab[s1][s2].startsWith("!")) {
+                st = st.substring(0, st_i);
+                st_i--;
+            } else {
+                temp.setLength(0);
+                for (int k = tab[s1][s2].length() - 1; k >= 0; k--) {
+                    temp.append(tab[s1][s2].charAt(k));
+                }
+                st = st.substring(0, st_i) + temp.toString();
+                st_i = st.length() - 1;
+            }
+            
+            System.out.print(st + "\t\t");
+            for (int n = s_i; n < s.length(); n++) {
+                System.out.print(s.charAt(n));
+            }
+            System.out.println();
+            
+            if (st.charAt(st_i) == s.charAt(s_i) && s.charAt(s_i) != '$') {
+                st = st.substring(0, st_i);
+                s_i++;
+                st_i--;
+            }
+        }
+        
+        System.out.println("Success");
+        scanner.close();
+    }
+}
+
+
+exp 7 :
+
+import java.util.Scanner;
+
+class ProductionRule {
+    String left;
+    String right;
+
+    ProductionRule(String left, String right) {
+        this.left = left;
+        this.right = right;
+    }
+}
+
+public class Exp7 {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        String input, stack = ""; 
+        int ruleCount;
+
+        System.out.println("Enter the number of production rules: ");
+        ruleCount = scanner.nextInt();
+        scanner.nextLine();
+
+        ProductionRule[] rules = new ProductionRule[ruleCount];
+        System.out.println("Enter the production rules (in the form 'left->right'): ");
+        for (int i = 0; i < ruleCount; i++) {
+            String[] temp = scanner.nextLine().split("->");
+            rules[i] = new ProductionRule(temp[0], temp[1]);
+        }
+
+        System.out.println("Enter the input string: ");
+        input = scanner.nextLine();
+        int i = 0;
+
+        System.out.println("Stack\tInputBuffer\tAction");
+        while (true) {
+            if (i < input.length()) {
+                char ch = input.charAt(i);
+                i++;
+                stack += ch;
+                System.out.print(stack + "\t");
+                System.out.print(input.substring(i) + "\t\tShift " + ch + "\n");
+            }
+            
+            for (int j = 0; j < ruleCount; j++) {
+                int substringIndex = stack.indexOf(rules[j].right);
+                if (substringIndex != -1) {
+                    stack = stack.substring(0, substringIndex) + rules[j].left;
+                    System.out.print(stack + "\t");
+                    System.out.print(input.substring(i) + "\t\tReduce " + rules[j].left + "->" + rules[j].right + "\n");
+                    j = -1;
+                }
+            }
+            
+            if (stack.equals(rules[0].left) && i == input.length()) {
+                System.out.println("\nAccepted");
+                break;
+            }
+            
+            if (i == input.length()) {
+                System.out.println("\nNot Accepted");
+                break;
+            }
+        }
+        scanner.close();
+    }
+}
+
+
+
+exp 8 :
+
+
+import java.util.Scanner;
+
+public class Exp8 {
+    public static void main(String[] args) {
+        char[] stack = new char[20];
+        char[] ip = new char[20];
+        char[][][] opt = new char[10][10][1];
+        char[] ter = new char[10];
+        int i, j, k, n, top = 0, col = 0, row = 0;
+        Scanner scanner = new Scanner(System.in);
+
+        for (i = 0; i < 10; i++) {
+            stack[i] = 0;
+            ip[i] = 0;
+            for (j = 0; j < 10; j++) {
+                opt[i][j][0] = 0;
+            }
+        }
+
+        System.out.print("Enter the no. of terminals: ");
+        n = scanner.nextInt();
+        System.out.print("\nEnter the terminals: ");
+        ter = scanner.next().toCharArray();
+
+        System.out.println("\nEnter the table values:");
+        for (i = 0; i < n; i++) {
+            for (j = 0; j < n; j++) {
+                System.out.printf("\nEnter the value for %c %c: ", ter[i], ter[j]);
+                opt[i][j] = scanner.next().toCharArray();
+            }
+        }
+
+        System.out.println("\nOPERATOR PRECEDENCE TABLE:");
+        for (i = 0; i < n; i++) {
+            System.out.print("\t" + ter[i]);
+        }
+        System.out.println();
+
+        for (i = 0; i < n; i++) {
+            System.out.println();
+            System.out.print(ter[i]);
+            for (j = 0; j < n; j++) {
+                System.out.print("\t" + opt[i][j][0]);
+            }
+        }
+
+        stack[top] = '$';
+        System.out.print("\nEnter the input string: ");
+        String input = scanner.next();
+        ip = input.toCharArray();
+        i = 0;
+
+        System.out.println("\nSTACK\t\t\tINPUT STRING\t\t\tACTION");
+        System.out.print("\n" + String.valueOf(stack) + "\t" + input + "\t\t");
+
+        while (i <= input.length()) {
+            for (k = 0; k < n; k++) {
+                if (stack[top] == ter[k]) col = k;
+                if (ip[i] == ter[k]) row = k;
+            }
+
+            if ((stack[top] == '$') && (ip[i] == '$')) {
+                System.out.println("String is accepted");
+                break;
+            } else if ((opt[col][row][0] == '<') || (opt[col][row][0] == '=')) {
+                stack[++top] = opt[col][row][0];
+                 stack[++top] = ip[i];
+                System.out.println("Shift " + ip[i]);
+                i++;
+            } else {
+                if (opt[col][row][0] == '>') {
+                    while (stack[top] != '<') {
+                        --top;
+                    }
+                    top = top - 1;
+                    System.out.println("Reduce");
+                } else {
+                    System.out.println("\nString is not accepted");
+                    break;
+                }
+            }
+
+            System.out.println();
+            for (k = 0; k <= top; k++) {
+                System.out.print(stack[k]);
+            }
+            System.out.print("\t\t\t");
+            for (k = i; k < input.length(); k++) {
+                System.out.print(ip[k]);
+            }
+            System.out.print("\t\t\t");
+        }
+        scanner.close();
+    }
+}
+
+
+exp 9 :
+
+
+import java.util.Scanner;
+
+public class Exp9 {
+    static int[] stack;
+    static int top, n;
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        top = -1;
+
+        System.out.println("Enter the size of stack[MAX=100]: ");
+        n = scanner.nextInt();
+
+        if (n <= 0) {
+            System.out.println("Invalid stack size.");
+            return;
+        }
+
+        stack = new int[n];
+
+        System.out.println("\n\tStack Operations:");
+        System.out.println("\t--------------------------");
+        System.out.println("\t1. Push");
+        System.out.println("\t2. Pop");
+        System.out.println("\t3. Display");
+        System.out.println("\t4. EXIT");
+
+        int choice;
+        do {
+            System.out.println("\nEnter your choice: ");
+            choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    push(scanner);
+                    break;
+                case 2:
+                    pop();
+                    break;
+                case 3:
+                    display();
+                    break;
+                case 4:
+                    System.out.println("\nEXIT");
+                    break;
+                default:
+                    System.out.println("Please enter a valid choice.");
+            }
+        } while (choice != 4);
+
+        scanner.close();
+    }
+
+    static void push(Scanner scanner) {
+        if (top >= n - 1) {
+            System.out.println("\nStack overflow");
+        } else {
+            System.out.println("Enter a value to be pushed: ");
+            int x = scanner.nextInt();
+            
+            stack[++top] = x;
+        }
+    }
+
+    static void pop() {
+        if (top == -1) {
+            System.out.println("\nStack underflow");
+        } else {
+            System.out.println("\nThe popped element is " + stack[top--]);
+            
+        }
+    }
+
+    static void display() {
+        if (top >= 0) {
+            System.out.println("\nThe elements in the stack are:");
+            for (int i = top; i >= 0; i--) {
+                System.out.println(stack[i]);
+            }
+            System.out.println("\nSelect next choice");
+        } else {
+            System.out.println("\nThe stack is empty.");
+        }
+    }
+}
+
+
+
+exp 10 :
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+import java.util.Stack;
+
+class Instruction {
+    String op;
+    String arg1;
+    String arg2;
+    String result;
+
+    Instruction(String op, String arg1, String arg2, String result) {
+        this.op = op;
+        this.arg1 = arg1;
+        this.arg2 = arg2;
+        this.result = result;
+    }
+
+    @Override
+    public String toString() {
+        return result + " = " + arg1 + " " + op + " " + arg2;
+    }
+}
+
+class IntermediateCodeGenerator {
+    private List<Instruction> instructions;
+    private Stack<String> operands;
+    private int tempCount;
+
+    IntermediateCodeGenerator() {
+        instructions = new ArrayList<>();
+        operands = new Stack<>();
+        tempCount = 0;
+    }
+
+    public List<Instruction> generate(String expression) {
+        Stack<Character> operators = new Stack<>();
+        StringBuilder operand = new StringBuilder();
+
+        for (int i = 0; i < expression.length(); i++) {
+            char token = expression.charAt(i);
+
+            if (Character.isWhitespace(token)) {
+                continue;
+            }
+
+            if (Character.isLetterOrDigit(token)) {
+                operand.append(token);
+                if (i == expression.length() - 1 || !Character.isLetterOrDigit(expression.charAt(i + 1))) {
+                    operands.push(operand.toString());
+                    operand.setLength(0);
+                }
+            } else if (token == '(') {
+                operators.push(token);
+            } else if (token == ')') {
+                while (!operators.isEmpty() && operators.peek() != '(') {
+                    processOperator(operators.pop());
+                }
+                operators.pop(); // remove '('
+            } else if (isOperator(token)) {
+                while (!operators.isEmpty() && precedence(token) <= precedence(operators.peek())) {
+                    processOperator(operators.pop());
+                }
+                operators.push(token);
+            }
+        }
+
+        while (!operators.isEmpty()) {
+            processOperator(operators.pop());
+        }
+
+        return instructions;
+    }
+
+    private void processOperator(char operator) {
+        String operand2 = operands.pop();
+        String operand1 = operands.pop();
+        String result = newTemp();
+        instructions.add(new Instruction(String.valueOf(operator), operand1, operand2, result));
+        operands.push(result);
+    }
+
+    private String newTemp() {
+        return "t" + tempCount++;
+    }
+
+    private boolean isOperator(char token) {
+        return token == '+' || token == '-' || token == '*' || token == '/';
+    }
+
+    private int precedence(char operator) {
+        switch (operator) {
+            case '+':
+            case '-':
+                return 1;
+            case '*':
+            case '/':
+                return 2;
+            default:
+                return -1;
+        }
+    }
+}
+
+public class exp10 {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter an arithmetic expression:");
+        String expression = scanner.nextLine();
+
+        IntermediateCodeGenerator icg = new IntermediateCodeGenerator();
+        List<Instruction> code = icg.generate(expression);
+
+        System.out.println("Intermediate Code:");
+        for (Instruction instr : code) {
+            System.out.println(instr);
+        }
+
+        scanner.close();
+    }
+}
