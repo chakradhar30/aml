@@ -806,3 +806,87 @@ public class exp10 {
         scanner.close();
     }
 }
+
+
+exp 10_2 :
+
+import java.util.*;
+
+class ICG {
+    static int val(char ch){
+        switch(ch){
+            case '+':
+            case '-': return 1;
+            case '*':
+            case '/': return 2;
+            case '^': return 3;
+            case '(' :return 4;
+            default : return -1;
+        }
+    }
+    public static void main(String[] args) {
+        Scanner sc=new Scanner(System.in);
+        System.out.print("Arithmetic Exp : ");
+        String exp=sc.nextLine();
+        String ans="";
+        Stack<Character> s1=new Stack<>();
+        for(int i=0;i<exp.length();i++){
+            char ch=exp.charAt(i);
+            if(val(ch)==-1 && ch!=')') ans+=ch;
+            else if(s1.isEmpty() || val(ch)>val(s1.peek())) s1.push(ch);
+            else{
+                while(!s1.isEmpty() && val(ch) <=val(s1.peek()) && s1.peek()!='('){
+                    ans+=s1.pop();
+                }
+                if(ch==')') s1.pop();
+                else s1.push(ch);
+            }
+        }
+        while(!s1.isEmpty()) ans+=s1.pop();
+        
+        int j=0;
+        Stack<String> s2 =new Stack<>();
+        for(int i=0;i<ans.length();i++){
+            char ch=ans.charAt(i);
+            if(val(ch)==-1) s2.push(ch+"");
+            else{
+                String o2=s2.pop();
+                String o1=s2.pop();
+                System.out.println("t"+j+"="+o1+ch+o2);
+                s2.push("t"+j);
+                j++;
+            }
+        }
+    }
+}
+
+exp 2_2:
+import java.util.*;
+
+public class Exp2 {
+    public static void main(String[] args) {
+        List<String> keywords = Arrays.asList("if", "else", "while", "for", "int", "float", "double", "char", "String", "boolean");
+        List<String> operators = Arrays.asList("+", "-", "*", "/", "=", ">", "<", "!", "&", "|", "++", "--");
+        List<String> delimiters = Arrays.asList("(", ")", "{", "}", "[", "]", ",", ";");
+        
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter program with single spaces:");
+        String[] tokens = sc.nextLine().split(" ");
+        sc.close();
+        
+        for (String token : tokens) {
+            if (keywords.contains(token))
+                System.out.println(token + ": keyword");
+            else if (operators.contains(token))
+                System.out.println(token + ": operator");
+            else if (delimiters.contains(token))
+                System.out.println(token + ": delimiter");
+            else if (token.matches("[a-zA-Z_][a-zA-Z0-9_]*"))
+                System.out.println(token + ": identifier");
+            else if (token.matches("\\d+(\\.\\d+)?"))
+                System.out.println(token + ": literal");
+            else
+                System.out.println(token + ": unknown");
+        }
+    }
+}
