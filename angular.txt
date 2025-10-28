@@ -1,0 +1,1383 @@
+Experiment - 2 :
+
+
+app.ts 
+import { Component } from '@angular/core'; 
+import { Student } from './student/student'; 
+import { Faculty } from './faculty/faculty'; 
+@Component({ 
+selector: 'app-root', 
+imports: [Student,Faculty], 
+templateUrl: './app.html', 
+styleUrl: './app.css' 
+}) 
+export class App { 
+protected title = 'EXP-2-Components'; 
+}
+
+
+app.component.html 
+<div class="main-container"> 
+<app-student></app-student> 
+<app-faculty></app-faculty> 
+</div> 
+1.2.3. app.css 
+main-container { 
+display: flex; 
+justify-content: space-around; 
+align-items: flex-start; 
+margin: 50px auto; 
+max-width: 900px; 
+} 
+
+ Updating angular.json 
+Replace this: 
+"assets": [ 
+{ 
+"glob": "**/*", 
+"input": "public" 
+} 
+] 
+With this: 
+"assets": [ 
+"src/assets", 
+"src/favicon.ico" 
+] 
+
+2.1.1 student.ts 
+import { Component } from '@angular/core'; import 
+{ CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms'; 
+@Component({ 
+selector: 'app-student', 
+standalone: true, 
+imports: [CommonModule, FormsModule], 
+templateUrl: './student.html', 
+styleUrls: ['./student.css'] 
+}) 
+export class Student { 
+registerStudent() { 
+alert('Student registration submitted!'); 
+} 
+} 
+2.1.2 student.html 
+<div class="form-container"> 
+<img src="assets/stu.png" alt="student" class="avatar" > 
+<h2>Student Registration</h2> 
+<form> 
+<input type="text" placeholder="Full Name" required /> <input type="email" placeholder="Email" required /> <input type="password" placeholder="Password" required /> <button type="submit">Register</button> 
+</form> 
+</div> 
+2.1.3 student.css 
+.form-container { 
+background: #f9f9f9; 
+border-radius: 10px; 
+padding: 30px; 
+width: 300px; 
+text-align: center; 
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+} 
+.avatar { 
+width: 
+250px; 
+height: 
+auto; 
+margin-bottom: 15px; 
+border-radius: 50%; 
+} 
+form input { 
+width: 100%; 
+padding: 10px; 
+margin: 10px 0;
+border: 1px solid 
+#ccc; border-radius: 
+5px; 
+}
+
+form button { 
+width: 100%; 
+background-color: #4caf50; 
+color: white; 
+padding: 10px; 
+border: none; 
+border-radius: 
+5px; cursor: 
+pointer; 
+} 
+form button:hover { 
+background-color: 
+#45a049; 
+} 
+2.2. Faculty Registration Form 
+2.2.1. faculty.ts 
+import { Component } from '@angular/core'; 
+import { CommonModule } from '@angular/common'; 
+import { FormsModule } from '@angular/forms'; 
+@Component({ 
+selector: 'app-faculty', 
+standalone: true, 
+imports: [CommonModule, FormsModule], 
+templateUrl: './faculty.html', 
+styleUrls: ['./faculty.css'] 
+}) 
+export class Faculty { 
+registerFaculty() { 
+alert('Faculty registration submitted!'); 
+} 
+} 
+2.2.2. faculty.html 
+<div class="form-container"> 
+<img src="assets/fact.png" alt="Faculty" class="avatar" /> <h2>Faculty Registration</h2> 
+<form> 
+<input type="text" placeholder="Full Name" required /> <input type="email" placeholder="Email" required /> <input type="password" placeholder="Password" required /> <button type="submit">Register</button> 
+</form> 
+</div> 
+2.2.2. faculty.css
+.form-container {
+background: #f9f9f9; 
+border-radius: 10px; 
+padding: 30px; 
+width: 300px; 
+text-align: center; 
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+} 
+.avatar { 
+width: 
+250px; 
+margin-bottom: 15px; 
+} 
+form input { 
+width: 100%; 
+padding: 10px; 
+margin: 10px 0; 
+border: 1px solid 
+#ccc; border-radius: 
+5px; 
+} 
+form button { 
+width: 100%; 
+background-color: #4caf50; 
+color: white; 
+padding: 10px; 
+border: none; 
+border-radius: 
+5px; cursor: 
+pointer; 
+} 
+form button:hover { 
+background-color: 
+#45a049; 
+}
+
+
+
+
+
+
+Experiment -3:
+
+app.ts:
+
+import{ Component } from '@angular/core'; 
+import{ CommonModule }from '@angular/common';  
+import { Home } from "./home/home"; 
+import{ Applicant} from './applicant/applicant';  
+import { Recruiter } from './recruiter/recruiter'; 
+@Component({  
+selector: 'app-root', 
+standalone: true, 
+imports:[CommonModule,Home,Applicant,Recruiter],  
+templateUrl: './app.html', 
+styleUrl: './app.css' 
+}) 
+export class App {  
+currentView: string = 'home'; 
+showApplicant() {  
+this.currentView = 'applicant'; 
+} 
+showRecruiter() {  
+this.currentView = 'recruiter'; 
+} 
+showHome() {  
+this.currentView = 'home'; 
+} 
+} 
+
+app.html 
+<app-home *ngIf="currentView === 'home'"(goToApplicant)="showApplicant()"  (goToRecruiter)="showRecruiter()"> </app-home> 
+<app-applicant *ngIf="currentView === 'applicant'"(goBack)="showHome()"> </app applicant> 
+<app-recruiter *ngIf="currentView === 'recruiter'"(goBack)="showHome()"> </app-recruiter> 
+
+app.css 
+.container { 
+max-width: 600px; 
+} 
+
+home.html
+<div class="home-container"> 
+<h2>Welcome to the Job Portal</h2> 
+<button (click)="goToApplicant.emit()">Apply for a Job</button> 
+<button (click)="goToRecruiter.emit()">Post the Job</button> 
+</div> 
+ 
+Home.css 
+.home-container {  
+position: relative;  
+text-align: center;  
+margin-top: 50px;  
+padding: 40px;  
+height: 100vh;  
+color: red;  
+overflow: hidden; 
+} 
+.home-container::before {  
+content: ''; 
+background-image: url('/assets/portal.png');  
+background-size: contain; 
+background-repeat: no-repeat;  
+background-position: center;  
+opacity: 0.2; 
+position: absolute;  
+top: 0; 
+left: 0; 
+width: 100%; 
+height: 100%; 
+z-index: 0; 
+} 
+.home-container h2, 
+.home-container button {  
+position: relative; 
+z-index: 1; 
+}
+.home-container h2 {  
+font-size: 36px;  
+margin-bottom: 30px; 
+text-shadow: 1px 1px 5px #000; 
+} 
+.home-container button { 
+margin: 10px;  
+padding: 14px 28px;  
+font-size: 18px;  
+border: none;  
+border-radius: 8px;  
+cursor: pointer; 
+transition: background-color 0.3s ease; 
+} 
+.home-container button:first-of-type {  
+background-color: #007bff; 
+color: white; 
+} 
+.home-container button:first-of-type:hover {  
+background-color: #0056b3; 
+} 
+.home-container button:last-of-type {  
+background-color: #28a745; 
+color: white; 
+} 
+.home-container button:last-of-type:hover { 
+background-color: #1e7e34; 
+} 
+
+Home.ts 
+import{ Component, EventEmitter, Output } from '@angular/core'; 
+@Component({ 
+selector: 'app-home',  
+standalone: true,  
+imports: [], 
+templateUrl: './home.html',  
+styleUrl: './home.css' 
+}) 
+export class Home { 
+@Output() goToApplicant = new EventEmitter<void>();  
+@Output() goToRecruiter = new EventEmitter<void>(); } 
+
+
+applicant.ts 
+import{ Component ,EventEmitter, Output} from '@angular/core';  
+import { CommonModule } from '@angular/common'; import { 
+FormsModule } from '@angular/forms'; 
+@Component({ 
+selector: 'app-applicant',  
+standalone: true, 
+imports:[CommonModule, FormsModule],  
+templateUrl: './applicant.html', 
+styleUrls: ['./applicant.css'] 
+}) 
+export class Applicant { submitted = false; 
+// Form fields  
+fullName = '';  
+position = '';  
+experience = '';  
+department = '';  
+location = '';  
+contact = ''; 
+registerApplicant() { 
+this.submitted = true; 
+} 
+}
+applicant.html 
+<div class="form-container"> 
+<img src="assets/Application.png" alt="student" class="avatar" 
+> <h3>JOB APPLICATION FORM</h3> 
+<form *ngIf="!submitted"> 
+
+<input type="text" placeholder="Full Name" required [(ngModel)]="fullName" name="name" /> 
+<select required [(ngModel)]="position" name="position"> 
+<option value="" disabled selected>Select Position</option> 
+<option>Assistant Professor</option> 
+<option>Associate Professor</option> 
+<option>Professor</option> 
+</select> 
+<input type="text" placeholder="Total Experience" required [(ngModel)]="experience"  name="experience" /> 
+<input type="text" placeholder="Department" required [(ngModel)]="department"  name="department" /> 
+<select required [(ngModel)]="location" name="location"> 
+<option value="" disabled selected>Location</option> 
+<option>Telangana</option> 
+<option>Andhra Pradesh</option> 
+</select> 
+<input type="text" placeholder="Contact Details" required [(ngModel)]="contact"  name="contact" /> 
+<button type="button" (click)="registerApplicant()">Submit</button> </form> 
+<div *ngIf="submitted" class="success-message">
+<h4>~ª.˙‘˛3·Your Application is sucessfully submitted !</h4> 
+<p><strong>Full Name:</strong> {{ fullName }}</p> 
+<p><strong>Position:</strong> {{ position }}</p> 
+<p><strong>Experience:</strong> {{ experience }}</p> 
+<p><strong>Department:</strong> {{ department }}</p> 
+<p><strong>Location:</strong> {{ location }}</p> 
+<p><strong>Contact:</strong> {{ contact}}</p> 
+</div> 
+</div>  
+applicant.css 
+.form-container {  
+background: #f9f9f9;  
+border-radius: 10px;  
+padding: 30px;  
+width: 300px; 
+text-align: center; 
+box-shadow: 0 4px 8px rgba(0, 0, 0, 
+0.1); } 
+.avatar { 
+width: 250px;  
+height: auto; 
+margin-bottom: 15px;  
+border-radius: 50%; 
+} 
+form input {  
+width: 100%;  
+padding: 10px;  
+margin: 10px 0; 
+border: 1px solid #ccc;  
+border-radius: 5px; 
+} 
+form button { 
+width: 100%; 
+background-color: #4caf50;  
+color: white; 
+padding: 10px;  
+border: none;  
+border-radius: 5px;  
+cursor: pointer; 
+} 
+form button:hover {  
+background-color: #45a049; 
+} 
+
+⬛ Step 7: Recruiter Form (recruiter.html) 
+Recruiter.ts 
+import{ Component,EventEmitter, Output}from '@angular/core';  
+import { CommonModule } from '@angular/common'; 
+import { FormsModule } from '@angular/forms'; 
+@Component({ 
+selector: 'app-recruiter',  
+standalone: true, 
+imports:[CommonModule, FormsModule],  
+templateUrl: './recruiter.html', 
+styleUrl: './recruiter.css' 
+}) 
+export class Recruiter {  
+submitted = false; 
+// Form fields  
+fullName = '';  
+position = '';  
+experience = '';  
+department = '';  
+location = ''; 
+contact = ''; 
+registerRecruiter() {  
+this.submitted = true; 
+} 
+} 
+Recruiter.html 
+<div class="form-container"> 
+<img src="assets/job.png" alt="Faculty" class="avatar" /> 
+<h3>Recruiter Form</h3> 
+<form *ngIf="!submitted"> 
+<input type="text" placeholder="Full Name" required [(ngModel)]="fullName" name="name" />  
+<select required [(ngModel)]="position" name="position"> 
+<option value="" disabled selected>Select Position</option> 
+<option>Assistant Professor</option> 
+<option>Associate Professor</option> 
+<option>Professor</option> 
+</select> 
+<input type="text" placeholder="Total Experience" required [(ngModel)]="experience"  name="experience" /> 
+<input type="text" placeholder="Department" required [(ngModel)]="department"  name="department" /> 
+<select required [(ngModel)]="location" name="location"> 
+<option value="" disabled selected>Location</option> 
+<option>Telangana</option> 
+<option>Andhra Pradesh</option> 
+</select> 
+<input type="text" placeholder="Contact Details" required [(ngModel)]="contact"  name="contact" /> 
+<button 
+type="button"(click)="registerRecruiter()">Submit</button> </form>
+<div *ngIf="submitted" class="success-message"> 
+<h4>~·‘˛3.ªApplication Posted !</h4> 
+<p><strong>Full Name:</strong> {{ fullName }}</p> 
+<p><strong>Position:</strong> {{ position }}</p> 
+<p><strong>Experience:</strong> {{ experience }}</p> 
+<p><strong>Department:</strong> {{ department }}</p> 
+<p><strong>Location:</strong> {{ location }}</p> 
+<p><strong>Contact:</strong> {{ contact}}</p> 
+</div> 
+</div> 
+
+Recruiter.css 
+body, html {  
+height: 90%; 
+margin: 0; 
+} 
+.form-container {  
+display: flex; 
+flex-direction: column;  
+align-items: center;  
+justify-content: center; 
+max-width: 350px;  
+margin: 0 auto;  
+padding: 30px; 
+background-color: #f7f7f7;  
+border-radius: 10px; 
+box-shadow: 0 0 15px rgba(0,0,0,0.1);  
+height: 100vh; /* full screen height */ }
+.form-container img.avatar {  
+width: 100%; 
+max-width: 300px; /* You can adjust this size */  
+height: auto; 
+margin-bottom: 10px;  
+display: block;  
+margin-left: auto;  
+margin-right: auto; 
+} 
+form, .success-message {  
+width: 100%; 
+text-align: left; 
+} 
+input, select {  
+width: 100%;  
+padding: 10px; 
+margin-bottom: 5px; 
+ border: 1px solid #ccc;  border-radius: 6px; 
+} 
+button {  
+width: 100%; 
+padding: 12px; 
+background-color: #28a745;  
+color: white; 
+border: none;  
+border-radius: 6px;  
+cursor: pointer;  
+font-size: 16px; 
+} 
+button:hover { 
+background-color: #1e7e34; 
+}
+
+
+
+
+
+Experiment - 4 :
+
+Edit app.routes.ts with your routes  
+import { Routes } from '@angular/router'; 
+import { Home } from './home/home'; 
+import { Destinations } from './destinations/destinations'; import { Bookings } from './bookings/bookings'; 
+export const routes: Routes = [ 
+{ path: '', component: Home }, 
+{ path: 'destinations', component: Destinations },  { path: 'bookings', component: Bookings } ]; 
+Edit app.ts 
+import { Component } from '@angular/core'; 
+import { RouterOutlet } from '@angular/router'; 
+@Component({ 
+selector: 'app-root', 
+imports: [RouterOutlet], 
+templateUrl: './app.html', 
+styleUrl: './app.css' 
+}) 
+export class App { 
+protected title = 'EXP-4’; 
+} 
+Edit app.html 
+<router-outlet></router-outlet> 
+ Step 4: Design each component (HTML + CSS + TS logic) Home.html 
+<div class="background"></div> 
+<div class="home-container"> 
+<h2> Pack Your Bags - Let's Explore! </h2> 
+<button (click)="goToDestinations()">Destination </button> <button (click)="goToBookings()">Booking</button> </div> 
+Home.ts 
+import { Component } from '@angular/core'; 
+import { Router } from '@angular/router'; 
+@Component({ 
+selector: 'app-home', 
+standalone: true, 
+imports: [], 
+templateUrl: './home.html', 
+styleUrl: './home.css' 
+}) 
+export class Home { 
+constructor(private router: Router) {} 
+goToDestinations() { 
+this.router.navigate(['/destinations']); } 
+goToBookings() { 
+this.router.navigate(['/bookings']); } 
+} 
+Edit home.css 
+.background { 
+background-image: url('/assets/tour1.png');  background-size: auto; 
+background-position: center; 
+background-repeat: no-repeat; 
+background-attachment: fixed; 
+opacity: 0.2; 
+position: fixed; 
+top: 0; 
+left: 0; 
+height: 100vh; 
+width: 100vw; 
+z-index: 0; 
+} 
+.home-container { 
+position: relative; 
+z-index: 1; 
+height: 100vh; 
+display: flex; 
+flex-direction: column; 
+justify-content: center; 
+align-items: center; 
+gap: 20px; 
+text-align: center; 
+} 
+h2 { 
+font-size: 2.5rem; 
+color: red; 
+text-shadow: 1px 1px 2px white; 
+}
+button { 
+padding: 10px 25px; 
+font-size: 1rem; 
+border: none; 
+border-radius: 10px; 
+cursor: pointer; 
+color: white; 
+transition: background-color 0.3s ease; 
+} 
+button:nth-of-type(1) { 
+background-color: #28a745; /* Green - Home */ } 
+button:nth-of-type(1):hover { 
+background-color: #218838; 
+} 
+button:nth-of-type(2) { 
+background-color: #17a2b8; /* Teal - Destination */ } 
+button:nth-of-type(2):hover { 
+background-color: #117a8b; 
+} 
+button:nth-of-type(3) { 
+background-color: #ffc107; /* Yellow - Booking */ color: black; 
+} 
+button:nth-of-type(3):hover { 
+background-color: #e0a800; 
+} 
+body, html { 
+margin: 0; 
+padding: 0; 
+height: 100%; 
+} 
+Destinations.ts 
+import { Component } from '@angular/core'; import { CommonModule } from '@angular/common'; 
+@Component({ 
+selector: 'app-destinations', 
+standalone: true, 
+imports: [CommonModule], 
+templateUrl: './destinations.html', 
+styleUrls: ['./destinations.css'] 
+}) 
+export class Destinations { 
+selected: string = ''; 
+destinations: { [key: string]: string[] } = {
+Paris: ['Eiffel Tower', 'Louvre Museum', 'Notre-Dame Cathedral'], Tokyo: ['Tokyo Tower', 'Shinjuku Gyoen', 'Asakusa Temple'], 'New York': ['Statue of Liberty', 'Central Park', 'Times Square'], 
+Dubai: ['Burj Khalifa', 'Palm Jumeirah', 'Dubai Mall'] 
+}; 
+selectDestination(destination: string) { 
+this.selected = destination; 
+} 
+} 
+Destinations.html 
+<div class="background"></div> 
+<h2>Top Travel Destinations</h2> 
+<div class="button-list"> 
+<button (click)="selectDestination('Paris')"> Paris</button> <button (click)="selectDestination('Tokyo')"> Tokyo</button> <button (click)="selectDestination('New York')"> New York</button> <button (click)="selectDestination('Dubai')"> Dubai</button> </div> 
+<div class="image-container" *ngIf="selected"> 
+<img [src]="'assets/' + selected.toLowerCase().replace(' ', '') + '.png'"  [alt]="selected + ' image'" /> 
+<ul> 
+<li *ngFor="let place of destinations[selected]"> 
+{{ place }} 
+</li> 
+</ul> 
+</div> 
+Destinations.css 
+.background { 
+background-image: url('/assets/dest.png'); 
+background-size: auto; 
+background-position: center; 
+background-repeat: no-repeat; 
+background-attachment: fixed; 
+position: fixed; 
+top: 0; 
+left: 0; 
+height: 100vh; 
+width: 100vw; 
+z-index: 0; 
+opacity: 0.15;
+} 
+h2 { 
+color: #d32f2f; 
+text-align: center; 
+margin-top: 40px; 
+font-size: 2.5rem; 
+text-shadow: 1px 1px 2px #ccc; 
+z-index: 1; 
+position: relative; 
+} 
+.button-list { 
+display: flex; 
+justify-content: center; 
+gap: 15px; 
+margin-bottom: 20px; 
+flex-wrap: wrap; 
+z-index: 1; 
+position: relative; 
+} 
+.button-list button { 
+padding: 10px 20px; 
+border: none; 
+background-color: #4d62b6; 
+color: white; 
+border-radius: 8px; 
+cursor: pointer; 
+transition: 0.3s; 
+font-size: 1rem; 
+box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); } 
+.button-list button:hover { 
+background-color: #00796b; 
+} 
+.image-container { 
+text-align: center; 
+margin-top: 20px; 
+z-index: 1; 
+position: relative; 
+} 
+.image-container img { 
+width: 300px; 
+height: auto; 
+border-radius: 10px; 
+margin-bottom: 15px; 
+} 
+.image-container ul { 
+list-style: none; 
+padding: 0; 
+margin-top: 15px; 
+}
+.image-container li { 
+background-color: #e0f2f1; 
+margin: 5px auto; 
+padding: 10px; 
+max-width: 300px; 
+border-radius: 5px; 
+font-size: 1.1rem; 
+box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1); 
+} 
+Bookings.ts 
+import { Component } from '@angular/core'; 
+import { CommonModule } from '@angular/common'; 
+import { FormsModule } from '@angular/forms'; 
+@Component({ 
+selector: 'app-bookings', 
+standalone: true, 
+imports: [CommonModule, FormsModule], 
+templateUrl: './bookings.html', 
+styleUrls: ['./bookings.css'] 
+}) 
+export class Bookings { 
+name: string = ''; 
+persons: number | null = null; 
+destination: string = ''; 
+bookingConfirmed = false; 
+submitBooking() { 
+if (this.name && this.persons && this.destination) { 
+this.bookingConfirmed = true; 
+} 
+} 
+} 
+Bookings.html 
+<div class="background"></div> 
+<div class="booking-container"> 
+<h2>Book Your Trip</h2> 
+<form (ngSubmit)="submitBooking()" #bookingForm="ngForm"> 
+<div class="form-row"> 
+<label for="name">Name:</label> 
+<input id="name" name="name" type="text" [(ngModel)]="name" required /> </div> 
+<div class="form-row"> 
+<label for="persons">No. of Persons:</label> 
+<input id="persons" name="persons" type="number" [(ngModel)]="persons"  required /> 
+</div> 
+<div class="form-row"> 
+<label for="destination">Choose Destination:</label>
+<select id="destination" name="destination" [(ngModel)]="destination" required> <option value="Paris">Paris</option> 
+<option value="Tokyo">Tokyo</option> 
+<option value="New York">New York</option> 
+<option value="Dubai">Dubai</option> 
+</select> 
+</div> 
+<button type="submit">Submit</button> 
+</form> 
+<div *ngIf="bookingConfirmed" class="confirmation"> 
+<p>Thank you, <strong>{{ name }}</strong>!</p> 
+<p>Your trip to <strong>{{ destination }}</strong> has been booked for  <strong>{{ persons }}</strong> person(s).</p> 
+</div> 
+</div> 
+Bookings.css 
+.background { 
+background-image: url('/assets/book.png'); 
+background-size: auto; 
+background-position: center; 
+background-repeat: no-repeat; 
+background-attachment: fixed; 
+position: fixed; 
+top: 0; 
+left: 0; 
+height: 100vh; 
+width: 100vw; 
+z-index: 0; 
+opacity: 0.3; 
+} 
+body, html { 
+margin: 0; 
+padding: 0; 
+height: 50%; 
+display: flex; 
+justify-content: center; 
+align-items: center; 
+background-color: #f0fff1; 
+font-family: Arial, sans-serif; 
+} 
+.booking-container { 
+text-align: center; 
+z-index: 1; 
+position: relative; 
+} 
+form { 
+display: flex; 
+flex-direction: column; 
+align-items: center;
+
+gap: 20px; 
+padding: 30px 40px; 
+border-radius: 5px;  
+box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); } 
+.form-row { 
+display: flex; 
+align-items: center; 
+gap: 10px; 
+width: 50%; 
+justify-content: center; 
+} 
+label { 
+width: 150px; 
+text-align: right; 
+font-weight: bold; 
+} 
+input, select { 
+padding: 8px; 
+font-size: 1rem; 
+border: 1px solid #ccc; 
+border-radius: 6px; 
+width: 150px; 
+} 
+select:focus { 
+outline: none; 
+border-color: teal; 
+box-shadow: 0 0 5px rgba(0, 128, 128, 0.5); } 
+button { 
+padding: 10px 25px; 
+font-size: 1rem; 
+background-color: teal; 
+color: white; 
+border: none; 
+border-radius: 8px; 
+cursor: pointer; 
+} 
+button:hover { 
+background-color: darkcyan; 
+} 
+h2 { 
+color: red; 
+} 
+.confirmation { 
+margin-top: 20px; 
+background-color: #e0f7fa; 
+padding: 20px; 
+border-radius: 10px;
+
+ max-width: 400px; 
+margin-left: auto; 
+margin-right: auto; 
+font-size: 1.1rem; 
+} 
+@media (max-width: 600px) { 
+.form-row { 
+flex-direction: column; 
+align-items: flex-start; 
+} 
+label { 
+width: 100%; 
+text-align: left; 
+} 
+input, select { 
+width: 100%; 
+} 
+form { 
+padding: 20px; 
+} 
+} 
+
+
+Experiment - 5 :
+
+
+Edit app.ts 
+import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { Faculty } from './faculty/faculty';
+
+
+@Component({
+  selector: 'app-root',
+  imports: [CommonModule,Faculty],
+  templateUrl: './app.html',
+  styleUrl: './app.css'
+})
+export class App {
+  
+  protected title = 'EXP-5-List';
+}
+
+app.html
+
+<app-faculty></app-faculty>
+
+faculty.ts
+
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+@Component({
+  selector: 'app-faculty',
+  imports: [CommonModule,FormsModule],
+  templateUrl: './faculty.html',
+  styleUrl: './faculty.css'
+})
+export class Faculty {
+
+    selectedDept = '';
+  selectedGender = '';
+
+  facultyList = [
+    {
+      name: 'Dr. N. Kasiviswanath',
+      dept: 'CSE',
+      email: 'hod.cse@gprec.ac.in',
+      gender: 'Male',
+      photo: 'assets/hod.png'
+    },
+    {
+      name: 'Smt. D.L.N.Prasunna',
+      dept: 'CSE',
+      email: 'prasunna.cse@gprec.ac.in',
+      gender: 'Female',
+      photo: 'assets/DLN.png'
+    },
+    {
+      name: 'Smt. T. chandana',
+      dept: 'ECS',
+      email: 'chandana.ecs@gprec.ac.in',
+
+      gender: 'Female',
+      photo: 'assets/chandana.png'
+    },
+    
+    {
+      name: 'Dr. R. Praveen Sam',
+      dept: 'ECS',
+      email: 'hod.ecs@gprec.ac.in',
+      gender: 'Male',
+      photo: 'assets/praveen.png'
+    },
+    {
+      name: 'Smt. Srilakshmi',
+      dept: 'CSE',
+      email: 'srilakshmi.cse@gprec.ac.in',
+      gender: 'Female',
+      photo: 'assets/srilakshmi.png'
+    }
+  ];
+
+  get filteredFaculty() {
+    return this.facultyList.filter(f =>
+      (this.selectedDept ? f.dept === this.selectedDept : true) &&
+      (this.selectedGender ? f.gender === this.selectedGender : true)
+    );
+  }
+}
+
+
+faculty.html
+
+<h2>GPREC FACULTY DIRECTORY</h2>
+
+<!-- Filters -->
+<div style="margin-bottom: 15px;">
+  <label>
+    Department:
+    <select [(ngModel)]="selectedDept">
+      <option value="">All</option>
+      <option value="CSE">CSE</option>
+      <option value="ECS">ECS</option>
+     
+    </select>
+  </label>
+
+  <label style="margin-left: 20px;">
+    Gender:
+    <select [(ngModel)]="selectedGender">
+      <option value="">All</option>
+
+      <option value="Male">Male</option>
+      <option value="Female">Female</option>
+    </select>
+  </label>
+</div>
+
+<!-- Table -->
+<table border="1" cellpadding="8" cellspacing="0">
+  <thead>
+    <tr>
+      <th>Photo</th>
+      <th>Name</th>
+      <th>Department</th>
+      <th>Email</th>
+      <th>Gender</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let f of filteredFaculty">
+      <td><img [src]="f.photo" alt="{{ f.name }}" width="60" height="60" style="border-radius: 50%;" /></td>
+      <td>{{ f.name }}</td>
+      <td>{{ f.dept }}</td>
+      <td>{{ f.email }}</td>
+      <td>{{ f.gender }}</td>
+    </tr>
+  </tbody>
+</table>
+
+
+faculty.css
+
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+th, td {
+  text-align: left;
+}
+h2
+{
+    text-align: center;
+    color: red;
+
+}
+
+
+Experiment : 6 
+
+Edit Cart-data1.service.ts
+
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class CartData1Service {
+ private cartItems: any[] = [];
+
+  addToCart(product: any) {
+    this.cartItems.push(product);
+  }
+
+  getCartItems(): any[] {
+    return this.cartItems;
+  }
+
+  removeItem(index: number) {
+    this.cartItems.splice(index, 1);
+  }
+
+  getTotal(): number {
+    return this.cartItems.reduce((sum, item) => sum + item.price, 0);
+  }
+}
+
+Editproduct.ts
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { CartData1Service } from '../cart-data1.service';
+
+@Component({
+  selector: 'app-product',
+  imports: [CommonModule],
+  templateUrl: './product.html',
+  styleUrl: './product.css'
+})
+export class Product {
+ products = [
+    { name: 'Laptop', price: 60000 },
+    { name: 'Mobile', price: 20000 },
+    { name: 'Headphones', price: 1500 }
+  ];
+
+  constructor(private cartData1: CartData1Service) {}
+
+  addToCart(product: any) {
+    this.cartData1.addToCart(product);
+    alert(`${product.name} added to cart!`);
+  }
+}
+
+Edit product.html
+<h2>Products</h2>
+<div *ngFor="let product of products" style="margin-bottom: 10px;">
+  {{ product.name }} - ₹{{ product.price }}
+  <button (click)="addToCart(product)">Add to Cart</button>
+</div>
+
+
+
+
+Editcart.ts
+import { Component , OnInit} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { CartData1Service } from '../cart-data1.service';
+
+@Component({
+  selector: 'app-cart',
+  imports: [CommonModule],
+  templateUrl: './cart.html',
+  styleUrl: './cart.css'
+})
+export class Cart implements OnInit {
+
+  cartItems: any[] = [];
+  total: number = 0;
+
+  constructor(private cartData1: CartData1Service) {}
+
+  ngOnInit() {
+    this.loadCart();
+  }
+
+  loadCart() {
+    this.cartItems = this.cartData1.getCartItems();
+    this.total = this.cartData1.getTotal();
+  }
+
+  removeItem(index: number) {
+    this.cartData1.removeItem(index);
+    this.loadCart();
+  }
+}
+
+Edit cart.html
+<h2>Your Cart</h2>
+<ul>
+  <li *ngFor="let item of cartItems; index as i">
+    {{ item.name }} - ₹{{ item.price }}
+    <button (click)="removeItem(i)">Remove</button>
+  </li>
+</ul>
+
+<h3 *ngIf="cartItems.length">Total: ₹{{ total}}</h3>
+<p *ngIf="!cartItems.length">Cart is empty</p>
+
+
+Edit app.ts
+
+import { Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { Product } from './product/product';
+import { Cart } from './cart/cart';
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [Product, Cart],
+  templateUrl: './app.html',
+  styleUrl: './app.css'
+})
+export class App {
+  protected title = 'EXP-6-Services';
+}
+
+Edit app.html
+
+<h1>🛒 Online Shopping Cart</h1>
+<div style="display: flex; gap: 40px;">
+  <app-product></app-product>
+  <app-cart></app-cart>
+</div>
+
+
+Experiment : 7
+
+app.module.ts.
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { AppComponent } from './app.component';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {MatSidenavModule} from '@angular/material'
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+@NgModule({
+   declarations: [
+      AppComponent
+   ],
+   imports: [
+      BrowserModule,
+      BrowserAnimationsModule,
+      MatSidenavModule,
+      FormsModule,
+      ReactiveFormsModule
+   ],
+   providers: [],
+   bootstrap: [AppComponent]
+})
+export class AppModule { }
+
+app.component.css.
+.tp-container {
+   position: absolute;
+   top: 0;
+   bottom: 0;
+   left: 0;
+   right: 0;
+   background: #eee;
+}
+.tp-section {
+   display: flex;
+   align-content: center;
+   align-items: center;
+   height: 60px;
+   width:100px;   
+}
+app.component.html.
+<mat-sidenav-container class = "tp-container">
+   <mat-sidenav mode = "side" opened>
+      <section class = "tp-section">
+         <span>File</span>
+      </section>
+      <section class = "tp-section">
+         <span>Edit</span>
+      </section>
+   </mat-sidenav>
+   <mat-sidenav-content>Main content</mat-sidenav-content>
+</mat-sidenav-container>
+
+
+Experiment - 8 :
+
+fetchdata.ts)
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+@Injectable({ providedIn: 'root' })
+export class Fetchdata {
+  constructor(private http: HttpClient) {}
+
+  getUser(): Observable<any> {
+    return this.http.get('https://jsonplaceholder.typicode.com/users');
+  }
+}
+✅ Step 4: Create the root component (app.ts)
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Fetchdata } from './fetchdata';
+
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './app.html',
+  styleUrls: ['./app.css']
+})
+export class App implements OnInit {
+  userList: any[] = [];
+
+  constructor(private fetchService: Fetchdata) {}
+
+  ngOnInit(): void {
+    this.fetchService.getUser().subscribe({
+      next: (users) => this.userList = users,
+      error: (err) => console.error('HTTP Error:', err)
+    });
+  }
+}
+✅ Step 5: Create the template (app.html)
+<h2 style="text-align:center;">User Data from Server</h2>
+
+<table style="margin: 0 auto; border: 1px solid black; border-collapse: collapse;">
+  <thead>
+    <tr>
+      <th style="border: 1px solid black; padding: 10px;">Name</th>
+      <th style="border: 1px solid black; padding: 10px;">Id</th>
+      <th style="border: 1px solid black; padding: 10px;">Email</th>
+      <th style="border: 1px solid black; padding: 10px;">Street</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let user of userList">
+      <td>{{ user.name }}</td>
+      <td>{{ user.id }}</td>
+      <td>{{ user.email }}</td>
+      <td>{{ user.address.street }}</td>
+    </tr>
+  </tbody>
+</table>
+✅ Step 6: add the styles (app.css)
+h2 {
+  text-align: center;
+  color: #2c3e50;
+  font-family: 'Arial', sans-serif;
+  margin-bottom: 20px;
+}
+
+/* Table styling */
+table {
+  margin: 0 auto;
+  border-collapse: collapse;
+  width: 80%;
+  font-family: 'Verdana', sans-serif;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* Table header */
+th {
+  border: 1px solid #2980b9;
+  padding: 12px;
+  background-color: #3498db;
+  color: white;
+  text-align: center;
+}
+
+/* Table rows */
+td {
+  border: 1px solid #2980b9;
+  padding: 12px;
+  text-align: center;
+  transition: background-color 0.3s;
+}
+
+/* Zebra striping */
+tbody tr:nth-child(even) {
+  background-color: #ecf0f1;
+}
+
+tbody tr:nth-child(odd) {
+  background-color: #ffffff;
+}
+
+/* Hover effect */
+tbody tr:hover {
+  background-color: #f1c40f;
+  color: #2c3e50;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+✅ Step 7: Bootstrap the application (main.ts)
+import 'zone.js';  // In TERMINAL npm install zone.ts
+import { bootstrapApplication } from '@angular/platform-browser';
+import { App } from './app/app';
+import { provideHttpClient } from '@angular/common/http';
+
+bootstrapApplication(App, {
+  providers: [provideHttpClient()]
+});
+
+
+
+
+other Experiment 2 :
+
+
+1. Create a new component named `form`:
+    ng generate component form
+
+2. Use the component in the app root:
+    Open src/app/app.component.html and add:
+    <app-form></app-form>
+
+3. Design the form component:
+    Open src/app/form/form.component.html and paste:
+
+    <form>
+      <fieldset>
+        <legend>Personal Details</legend>
+        <label>Salutation:
+          <select name="salutation">
+            <option>--None--</option>
+            <option>Mr.</option>
+            <option>Ms.</option>
+            <option>Mrs.</option>
+            <option>Dr.</option>
+            <option>Prof.</option>
+          </select>
+        </label><br/>
+        <label>First name: <input name="firstName" /></label><br/>
+        <label>Last name: <input name="lastName" /></label><br/>
+        <label>Gender:
+          <input type="radio" name="gender" value="male" /> Male
+          <input type="radio" name="gender" value="female" /> Female
+        </label><br/>
+        <label>Email: <input type="email" name="email" /></label><br/>
+        <label>Date of Birth: <input type="date" name="birthDate" /></label><br/>
+        <label>Address: <textarea name="address" cols="30" rows="3"></textarea></label><br/>
+        <button type="submit">Submit</button>
+      </fieldset>
+    </form>
+
+
+
+
+
